@@ -125,7 +125,7 @@ function ACFM_GetAircraftInCone(pos, dir, degs)
 
 	local ret = {}
 	
-	for aircraft, _ in pairs(ACF_ActiveAircraft) do
+	for _, aircraft in pairs(ACF_ActiveAircraft) do
 		
 		if not IsValid(aircraft) then continue end
 		
@@ -144,7 +144,7 @@ function ACFM_GetAircraftInSphere(pos, radius)
 	local ret = {}
 	local radSqr = radius * radius
 	
-	for aircraft, _ in pairs(ACF_ActiveAircraft) do
+	for _, aircraft in pairs(ACF_ActiveAircraft) do
 		
 		if not IsValid(aircraft) then continue end
 		
