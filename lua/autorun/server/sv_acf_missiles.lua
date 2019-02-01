@@ -264,14 +264,14 @@ end)
 -- Manage the population of the ACF_Aircraft table, done this way to avoid using ents.GetAll to improve performance
 hook.Add("PlayerEnteredVehicle", "ACFMissiles_PlayerEnterVehicle", function(pl, veh, role)
     if (IsValid(veh)) then
-        print("[ACF-Missiles] ".. tostring(pl:Name()) .." entered ".. tostring(veh))
+        --print("[ACF-Missiles] ".. tostring(pl:Name()) .." entered ".. tostring(veh))
         table.insert(ACF_ActiveAircraft, veh)
     end
 end)
 
 hook.Add("PlayerLeaveVehicle", "ACFMissiles_PlayerLeaveVehicle", function(pl, veh)
     if (IsValid(veh)) then
-        print("[ACF-Missiles] ".. tostring(pl:Name()) .." exited ".. tostring(veh))
+        --print("[ACF-Missiles] ".. tostring(pl:Name()) .." exited ".. tostring(veh))
         table.RemoveByValue(ACF_ActiveAircraft, veh)
     end
 end)
