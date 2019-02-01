@@ -1,11 +1,6 @@
-
-
 ACFM_Flares = {}
 
 ACFM_FlareUID = 0
-
-
-
 
 function ACFM_RegisterFlare(bdata)
 
@@ -25,9 +20,6 @@ function ACFM_RegisterFlare(bdata)
 	
 end
 
-
-
-
 function ACFM_UnregisterFlare(bdata)
 
 	local flareObj = bdata.FlareObj
@@ -40,9 +32,6 @@ function ACFM_UnregisterFlare(bdata)
 
 end
 
-
-
-
 function ACFM_OnFlareSpawn(bdata)
 
 	local flareObj = bdata.FlareObj
@@ -54,9 +43,6 @@ function ACFM_OnFlareSpawn(bdata)
 	end
 
 end
-
-
-
 
 function ACFM_GetFlaresInCone(pos, dir, degs)
 
@@ -79,9 +65,6 @@ function ACFM_GetFlaresInCone(pos, dir, degs)
 	
 end
 
-
-
-
 function ACFM_GetAnyFlareInCone(pos, dir, degs)
 
 	local bullets = ACF.Bullet
@@ -100,9 +83,6 @@ function ACFM_GetAnyFlareInCone(pos, dir, degs)
 	
 end
 
-
-
-
 function ACFM_GetMissilesInCone(pos, dir, degs)
 
 	local ret = {}
@@ -120,9 +100,6 @@ function ACFM_GetMissilesInCone(pos, dir, degs)
 	return ret
 	
 end
-
-
-
 
 function ACFM_GetMissilesInSphere(pos, radius)
 
@@ -144,8 +121,42 @@ function ACFM_GetMissilesInSphere(pos, radius)
 	
 end
 
+function ACFM_GetAircraftInCone(pos, dir, degs)
 
+	local ret = {}
+	
+	for aircraft, _ in pairs(ACF_ActiveAircraft) do
+		
+		if not IsValid(aircraft) then continue end
+		
+		if ACFM_ConeContainsPos(pos, dir, degs, aircraft:GetPos()) then
+			ret[#ret+1] = aircraft
+		end
+		
+	end
 
+	return ret
+	
+end
+
+function ACFM_GetAircraftInSphere(pos, radius)
+
+	local ret = {}
+	local radSqr = radius * radius
+	
+	for aircraft, _ in pairs(ACF_ActiveAircraft) do
+		
+		if not IsValid(aircraft) then continue end
+		
+		if pos:DistToSqr(aircraft:GetPos()) <= radSqr then
+			ret[#ret+1] = aircraft
+		end
+		
+	end
+
+	return ret
+	
+end
 
 -- Tests flare distraction effect upon all undistracted missiles, but does not perform the effect itself.  Returns a list of potentially affected missiles.
 -- argument is the bullet in the acf bullet table which represents the flare - not the cm_flare object!
@@ -171,9 +182,6 @@ function ACFM_GetAllMissilesWhichCanSee(pos)
 	
 end
 
-
-
-
 function ACFM_ConeContainsPos(conePos, coneDir, degs, pos)
 
 	local minDot = math.cos( math.rad(degs) )	
@@ -185,9 +193,6 @@ function ACFM_ConeContainsPos(conePos, coneDir, degs, pos)
 	
 	return (dot >= minDot)
 end
-
-
-
 
 function ACFM_ApplyCountermeasures(missile, guidance)
 
@@ -207,9 +212,6 @@ function ACFM_ApplyCountermeasures(missile, guidance)
 
 end
 
-
-
-
 function ACFM_ApplySpawnCountermeasures(missile, guidance)
 
 	if guidance.Override then return end
@@ -228,9 +230,6 @@ function ACFM_ApplySpawnCountermeasures(missile, guidance)
 
 end
 
-
-
-
 function ACFM_ApplyCountermeasure(missile, guidance, measure)
 
 	if not measure.AppliesTo[guidance.Name] then 
@@ -245,4 +244,3 @@ function ACFM_ApplyCountermeasure(missile, guidance, measure)
 	end
 
 end
-

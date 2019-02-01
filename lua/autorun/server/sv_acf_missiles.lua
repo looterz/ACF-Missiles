@@ -12,21 +12,15 @@
 
 ]]
 
-
-
 if not ACF then error("ACF is not installed - ACF Missiles requires it!") end
-
-
 
 -- Lookup table of all currently flying missiles.
 ACF_ActiveMissiles = ACF_ActiveMissiles or {}
 
-
+-- Lookup table of all currently piloted vehicles
+ACF_ActiveAircraft = ACF_ActiveAircraft or {}
 
 include("acf/shared/sh_acfm_getters.lua")
-
-
-
 
 function ACFM_BulletLaunch(BData)
 
@@ -68,14 +62,10 @@ function ACFM_BulletLaunch(BData)
     
 end
 
-
-
-
 function ACFM_ExpandBulletData(bullet)
 
     -- print("==== ACFM_ExpandBulletData")
     -- pbn(bullet)
-    
 
     local toconvert = {}
     toconvert["Id"] =             bullet["Id"] or "12.7mmMG"
@@ -116,9 +106,6 @@ function ACFM_ExpandBulletData(bullet)
 
 end
 
-
-
-
 function ACFM_MakeCrateForBullet(self, bullet)
 
     if not (type(bullet) == "table") then
@@ -129,7 +116,6 @@ function ACFM_MakeCrateForBullet(self, bullet)
             bullet = bullet.BulletData
         end
     end
-    
     
     self:SetNetworkedInt( "Caliber", bullet.Caliber or 10)
     self:SetNetworkedInt( "ProjMass", bullet.ProjMass or 10)
@@ -144,9 +130,6 @@ function ACFM_MakeCrateForBullet(self, bullet)
 
 end
 
-
-
-
 -- TODO: modify ACF to use this global table, so any future tweaks won't break anything here.
 ACF.FillerDensity = 
 {
@@ -157,30 +140,21 @@ ACF.FillerDensity =
     APHE =  1000
 }
 
-
-
-
 function ACFM_CompactBulletData(crate)
 
-    -- print("==== ACFM_CompactBulletData")
-    -- pbn(crate)
-    
     local compact = {}
-
-    compact["Id"] = 			crate.RoundId       or crate.Id
-    compact["Type"] = 		    crate.RoundType     or crate.Type
-    compact["PropLength"] = 	crate.PropLength    or crate.RoundPropellant
-    compact["ProjLength"] = 	crate.ProjLength    or crate.RoundProjectile
-    compact["Data5"] = 		    crate.Data5         or crate.RoundData5         or crate.FillerVol      or crate.CavVol             or crate.Flechettes
-    compact["Data6"] = 		    crate.Data6         or crate.RoundData6         or crate.ConeAng        or crate.FlechetteSpread
-    compact["Data7"] = 		    crate.Data7         or crate.RoundData7
-    compact["Data8"] = 		    crate.Data8         or crate.RoundData8
-    compact["Data9"] = 		    crate.Data9         or crate.RoundData9
-    compact["Data10"] = 		crate.Data10        or crate.RoundData10        or crate.Tracer
-    
-    compact["Colour"] = 		crate.GetColor and crate:GetColor() or crate.Colour
-    compact["Sound"] =          crate.Sound
-    
+    compact["Id"]               = crate.RoundId or crate.Id
+    compact["Type"]             = crate.RoundType or crate.Type
+    compact["PropLength"]       = crate.PropLength or crate.RoundPropellant
+    compact["ProjLength"]       = crate.ProjLength or crate.RoundProjectile
+    compact["Data5"]            = crate.Data5 or crate.RoundData5 or crate.FillerVol or crate.CavVol or crate.Flechettes
+    compact["Data6"]            = crate.Data6 or crate.RoundData6 or crate.ConeAng or crate.FlechetteSpread
+    compact["Data7"]            = crate.Data7 or crate.RoundData7
+    compact["Data8"]            = crate.Data8 or crate.RoundData8
+    compact["Data9"]            = crate.Data9 or crate.RoundData9
+    compact["Data10"]           = crate.Data10 or crate.RoundData10 or crate.Tracer
+    compact["Colour"]           = crate.GetColor and crate:GetColor() or crate.Colour
+    compact["Sound"]            = crate.Sound
     
     if not compact.Data5 and crate.FillerMass then
         local Filler = ACF.FillerDensity[compact.Type]
@@ -189,16 +163,10 @@ function ACFM_CompactBulletData(crate)
             compact.Data5 = crate.FillerMass / ACF.HEDensity * Filler
         end
     end
-    
-    -- print("---- ACFM_CompactBulletData OUTPUT")
-    -- pbn(compact)
-    -- print("==== end ACFM_CompactBulletData")
-    
+
     return compact
+
 end
-
-
-
 
 local ResetVelocity = {}
 
@@ -217,11 +185,10 @@ ResetVelocity.HP = ResetVelocity.AP
 ResetVelocity.FL = ResetVelocity.AP
 ResetVelocity.SM = ResetVelocity.AP
 ResetVelocity.APHE = ResetVelocity.AP
-            
+
 function ResetVelocity.HEAT(bdata)    
     
     if not bdata.Detonated then return ResetVelocity.AP(bdata) end
-    
     if not (bdata.MuzzleVel and bdata.SlugMV) then return end
     
     bdata.Flight:Normalize()
@@ -232,8 +199,6 @@ function ResetVelocity.HEAT(bdata)
     bdata.NotFirstPen = false
     
 end    
-
-
 
 -- Resets the velocity of the bullet based on its current state on the serverside only.
 -- This will de-sync the clientside effect!
@@ -247,28 +212,14 @@ function ACFM_ResetVelocity(bdata)
 
 end
 
-
-
-
-
 include("autorun/server/duplicatorDeny.lua")
 
-hook.Add( "InitPostEntity", "ACFMissiles_DupeDeny", function()
-    -- Need to ensure this is called after InitPostEntity because Adv. Dupe 2 resets its whitelist upon this event.
-    timer.Simple(1, function() duplicator.Deny("acf_missile") end)
-end )
-
-
-hook.Add( "InitPostEntity", "ACFMissiles_AddLinkable", function()
-    -- Need to ensure this is called after InitPostEntity because Adv. Dupe 2 resets its whitelist upon this event.
-    timer.Simple(1, function() ACF_E2_LinkTables["acf_rack"] = {AmmoLink = false} end)
-end )
-
-
-hook.Add( "InitPostEntity", "ACFMissiles_AddSoundSupport", function()
-    -- Need to ensure this is called after InitPostEntity because Adv. Dupe 2 resets its whitelist upon this event.
+-- Need to ensure these are called after InitPostEntity because Adv. Dupe 2 resets its whitelist upon this event.
+hook.Add("InitPostEntity", "ACFMissiles_AddSoundSupport", function()
     timer.Simple(1, function() 
-	
+        duplicator.Deny("acf_missile")
+        ACF_E2_LinkTables["acf_rack"] = {AmmoLink = false}
+
 		ACF.SoundToolSupport["acf_rack"] = 
 		{
 			GetSound = function(ent) return {Sound = ent.Sound} end,
@@ -304,7 +255,19 @@ hook.Add( "InitPostEntity", "ACFMissiles_AddSoundSupport", function()
 				local setSound = ACF.SoundToolSupport["acf_gun"].SetSound
 				setSound( ent, soundData )
 			end
-		} 
-		
+        }
+        
+        ACF.SoundToolSupport["acf_aircraftradar"] = ACF.SoundToolSupport["acf_missileradar"]
 	end)
-end )
+end)
+
+-- Manage the population of the ACF_Aircraft table, done this way to avoid using ents.GetAll to improve performance
+hook.Add("PlayerEnteredVehicle", "ACFMissiles_PlayerEnterVehicle", function(pl, vehicle, role)
+    print("[ACF-Missiles] ".. tostring( pl:Name() ) .." entered ".. tostring(vehicle:GetName()))
+    table.insert(ACF_Aircraft, vehicle)
+end)
+
+hook.Add("PlayerLeaveVehicle", "ACFMissiles_PlayerLeaveVehicle", function(pl, vehicle)
+    print("[ACF-Missiles] ".. tostring( pl:Name() ) .." exited ".. tostring(vehicle:GetName()))
+    table.RemoveByValue(ACF_Aircraft, vehicle)
+end)

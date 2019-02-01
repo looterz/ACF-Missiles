@@ -1,4 +1,4 @@
-/*
+--[[
 Github Repository Checker v1 
 	
 	Created by Wrex & Bubbus
@@ -11,7 +11,7 @@ Github Repository Checker v1
 
 	GitC.CheckVersion(RepoOwner, RepoName, Callback):
 	
-	**http://github.com/RepoOwner/RepoName**
+	**http:--github.com/RepoOwner/RepoName**
 	
 	Args:
 		RepoOwner:  
@@ -39,15 +39,13 @@ Github Repository Checker v1
 			print(data.name.." is "..data.uptodate and "Up To Date" or "Out Of Date")
 		end)
 	
-*/
-
-
+--]]
 
 GitRC = GitRC or {}
 
 local Repositories = {}
 
-local RepoURL = "https://api.github.com/repos/%s/%s/commits?per_page=10"
+local RepoURL = "https:--api.github.com/repos/%s/%s/commits?per_page=10"
 
 
 local string = string
@@ -68,7 +66,7 @@ local print = print
 -- end)
 
 
-// turns a git date into os.time() seconds
+-- turns a git date into os.time() seconds
 local function format_gitdate(gitdate)
 	local dt = string.Explode("T",gitdate)
 	local edate = string.Explode("-",dt[1])
@@ -80,7 +78,7 @@ local function format_gitdate(gitdate)
 	return time 
 end
 
-// gets the time zone of the local player
+-- gets the time zone of the local player
 local function get_timezone()
 	local now = os.time()
 	local lmt = os.date("*t", now)
@@ -99,7 +97,7 @@ local function get_timezone()
 	return diff
 end
 
-// gets a random filename from the commit and checks to make sure it exists
+-- gets a random filename from the commit and checks to make sure it exists
 local function get_randomfilenametime(files,committime)
 	local existingfiles = {}
 	for i=1, #files do
@@ -127,7 +125,7 @@ local function get_randomfilenametime(files,committime)
 	return filetime
 end
 
-// this will be used for other functions, so it gets to be its own function!
+-- this will be used for other functions, so it gets to be its own function!
 local function GetRepository(RepoOwner, RepoName, Callback)
 	Repositories[RepoName] = {} 
 	http.Fetch(string.format(RepoURL,RepoOwner, RepoName), function(json) 
@@ -154,11 +152,11 @@ function GitRC.CheckVersion(RepoOwner, RepoName, Callback)
 		return 
 	end
 	
-	// get the repo data
+	-- get the repo data
 	GetRepository(RepoOwner, RepoName, function(repo)
-		local repo =  repo[1] // pull the latest commit
+		local repo =  repo[1] -- pull the latest commit
 		if repo then
-			// get the latest commit
+			-- get the latest commit
 			http.Fetch( repo.url, function(json) 
 				local latestcommit = util.JSONToTable(json) 
 				if latestcommit then

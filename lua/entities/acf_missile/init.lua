@@ -484,9 +484,20 @@ function ENT:ForceDetonate()
 
 	ACF_ActiveMissiles[self] = nil
 
-	self.DetonateOffset = self.LastVel:GetNormalized() * -1
+	-- this means the missile was detonated before being launched, blow it up!
+	if (self.LastVel == nil) then
 
-    self.BaseClass.Detonate(self, self.BulletData)
+		self.LastVel = self.Launcher:GetVelocity()
+		self.Hit = true
+		self:Launch()
+		
+	else
+
+		self.DetonateOffset = self.LastVel:GetNormalized() * -1
+
+		self.BaseClass.Detonate(self, self.BulletData)
+	
+	end
 
 end
 

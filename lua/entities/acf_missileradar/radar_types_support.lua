@@ -1,8 +1,4 @@
-print("radar type support loaded")
-
-
-ACFM.RadarBehaviour = ACFM.RadarBehaviour or {}
-ACFM.DefaultRadarSound = ACFM.DefaultRadarSound or "buttons/button16.wav"
+print("missile radar type support loaded")
 
 ACFM.RadarBehaviour["DIR-AM"] = 
 {
@@ -10,7 +6,6 @@ ACFM.RadarBehaviour["DIR-AM"] =
 		return ACFM_GetMissilesInCone(self:GetPos(), self:GetForward(), self.ConeDegs)
 	end
 }
-
 
 ACFM.RadarBehaviour["OMNI-AM"] = 
 {

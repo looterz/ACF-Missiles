@@ -2,16 +2,16 @@ include("acf/client/cl_missilewiki.lua")
 
 local Menu = {}
 
-// the category the menu goes under
+-- the category the menu goes under
 Menu.Category = "Wiki"
 
-// the name of the item 
+-- the name of the item 
 Menu.Name = "ACF Missile Wiki"
 
-// the convar to execute when the player clicks on the tab
+-- the convar to execute when the player clicks on the tab
 Menu.Command = ""
 
-// should this panel refresh when the player opens the menu? 
+-- should this panel refresh when the player opens the menu? 
 Menu.ShouldRefresh = false
 
 
@@ -33,17 +33,17 @@ local name, repo = "Bubbus", "ACF-Missiles"
 
 
 local pagelistRegex = 
-// div id most closely containing the page list
+-- div id most closely containing the page list
 '<div id="wiki%-content">' ..
-// containing div class
+-- containing div class
 '.*<table class="files">' .. 
-// the list within
+-- the list within
 '(.-)'..
-// class-closing div
+-- class-closing div
 '</table>'
 
 local linklistRegexGlobal = 
-// get partial url in the listed links
+-- get partial url in the listed links
 '<a href="(.-)">'
 
 local extractPagenameRegex = 
@@ -51,7 +51,7 @@ local extractPagenameRegex =
 
 
 local function wikiPagesFailed(callback)
-    print("Failed to load the ACF Missiles Wiki.  If this continues, please inform us at https://github.com/Bubbus/ACF-Missiles")
+    print("Failed to load the ACF Missiles Wiki.  If this continues, please inform us at https:--github.com/Bubbus/ACF-Missiles")
 	callback()
 end
 
@@ -67,7 +67,7 @@ local function wikiPagesSuccess(html, callback)
 		for link in string.gmatch(linklist, linklistRegexGlobal) do
 			links[#links+1] = string.match(link, extractPagenameRegex) or "Home"
 		end
-		//PrintTable(links)
+		--PrintTable(links)
 		callback(links)
 	else
 		wikiPagesFailed(callback)
@@ -78,7 +78,7 @@ end
 
 
 GitRC = GitRC or {}
-local pagelist = "https://github.com/%s/%s/wiki/_pages"
+local pagelist = "https:--github.com/%s/%s/wiki/_pages"
 function GitRC.GetWikiPages(name, repo, callback)
 	http.Fetch(string.format(pagelist, name, repo), 
 		function(html) 	wikiPagesSuccess(html, callback) end,
@@ -90,14 +90,14 @@ end
 
 local DefaultPages = {}
 
-// TODO: more advanced sorting (grouping tut series together) OR tree structure in sidebar
+-- TODO: more advanced sorting (grouping tut series together) OR tree structure in sidebar
 local function pageSort(a, b)
 	return a < b
 end
 
 
 local StartPage = "Home"
-local Link = "http://raw.github.com/wiki/%s/%s/"
+local Link = "http:--raw.github.com/wiki/%s/%s/"
 
 local function WikiPageListCallback(Pages)
 
@@ -149,12 +149,12 @@ function Menu.MakePanel(Panel)
 	
 end
 
-// this function is called when the player opens their spawn menu
+-- this function is called when the player opens their spawn menu
 function Menu.OnSpawnmenuOpen()
 	if Menu.ShouldRefresh and CPanel then
 		Menu.MakePanel(CPanel)
 	end
-	// goes below this
+	-- goes below this
 
 
 end

@@ -2,7 +2,7 @@
 --[[
 # markdown.lua -- version 0.32
 
-<http://www.frykholm.se/files/markdown.lua>
+<http:--www.frykholm.se/files/markdown.lua>
 
 **Author:** Niklas Frykholm, <niklas@frykholm.se>  
 **Date:** 31 May 2008
@@ -10,7 +10,7 @@
 This is an implementation of the popular text markup language Markdown in pure Lua.
 Markdown can convert documents written in a simple and easy to read text format
 to well-formatted HTML. For a more thourough description of Markdown and the Markdown
-syntax, see <http://daringfireball.net/projects/markdown>.
+syntax, see <http:--daringfireball.net/projects/markdown>.
 
 The original Markdown source is written in Perl and makes heavy use of advanced
 regular expression techniques (such as negative look-ahead, etc) which are not available
@@ -104,7 +104,7 @@ THE SOFTWARE.
 	-	Fixed bug in -s flag.
 	-	Fixed emphasis bug.
 -	**0.12** -- 15 May 2006
-	-	Fixed several bugs to comply with MarkdownTest 1.0 <http://six.pairlist.net/pipermail/markdown-discuss/2004-December/000909.html>
+	-	Fixed several bugs to comply with MarkdownTest 1.0 <http:--six.pairlist.net/pipermail/markdown-discuss/2004-December/000909.html>
 -	**0.11** -- 12 May 2006
 	-	Fixed bug for escaping `*` and `_` inside code spans.
 	-	Added license terms.
@@ -112,7 +112,7 @@ THE SOFTWARE.
 -	**0.10** -- 3 May 2006
 	-	Initial public release.
 
-// Niklas
+-- Niklas
 ]]
 
 
@@ -953,7 +953,7 @@ function anchors(text)
 	return text
 end
 
--- Handle auto links, i.e. <http://www.google.com/>.
+-- Handle auto links, i.e. <http:--www.google.com/>.
 function auto_links(text)
 	local function link(s)
 		return add_escape("<a href=\"" .. s .. "\">") .. s .. "</a>"

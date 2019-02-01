@@ -147,12 +147,12 @@ function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This
 	
 	local curammo = table.Count(self.Missiles)
 	
-	// Detonate rack if damage causes ammo rupture, or a penetrating shot hits some ammo.
+	-- Detonate rack if damage causes ammo rupture, or a penetrating shot hits some ammo.
 	if not HitRes.Kill then
 		local Ratio = (HitRes.Damage * (self.ACF.MaxHealth - self.ACF.Health) / self.ACF.MaxHealth)^0.2
 		local ammoRatio = curammo / self.MagSize	--Thanks, eagle-eyed sestze!
 		local chance = math.Rand(0,1)
-		//print(Ratio, ammoRatio, chance, ( Ratio * ammoRatio ) > chance, HitRes.Overkill > 0 and chance > (1 - ammoRatio))
+		--print(Ratio, ammoRatio, chance, ( Ratio * ammoRatio ) > chance, HitRes.Overkill > 0 and chance > (1 - ammoRatio))
 		if ( Ratio * ammoRatio ) > chance or HitRes.Overkill > 0 and chance > (1 - ammoRatio) then  
 			self.Inflictor = Inflictor
 			HitRes.Kill = true
@@ -1074,7 +1074,7 @@ function ENT:PreEntityCopy()
 
     duplicator.StoreEntityModifier( self, "ACFRackInfo", {Id = self.Id} )
 
-    //Wire dupe info
+    --Wire dupe info
 	self.BaseClass.PreEntityCopy( self )
 	
 end
@@ -1102,7 +1102,7 @@ function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
 	end
     
     
-    //Wire dupe info
+    --Wire dupe info
 	self.BaseClass.PostEntityPaste( self, Player, Ent, CreatedEntities )
     
 end

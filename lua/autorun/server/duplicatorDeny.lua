@@ -1,6 +1,6 @@
 
 -- Thanks to Kogitsune
--- http://facepunch.com/showthread.php?t=1442021&p=46720911&viewfull=1#post46720911
+-- http:--facepunch.com/showthread.php?t=1442021&p=46720911&viewfull=1#post46720911
 
 function duplicator.Deny( class )
     local name, val

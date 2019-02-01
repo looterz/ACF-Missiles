@@ -19,14 +19,14 @@ function PANEL:Init()
 	self.modelview:SetCamPos( centre + Vector( 0, dist, 0 ) )
 	self.modelview:SetLookAt( centre )
 	
-	//*
+	--[[
 	self.close = vgui.Create('DButton', self)
 	self.close:SetSize(40, 15)
-	//self.close:SizeToContents()
+	--self.close:SizeToContents()
 	self.close:SetPos(580, 440)
 	self.close:SetText('Close')
 	self.close.DoClick = function() self:Close() end
-	//*/
+	----]]
 
 	self.html = vgui.Create('DHTML', self)
 	self.html:SetSize(450, 400)
@@ -57,11 +57,11 @@ end
 
 
 
-function PANEL:SetList(HTML, startpage, groups, modelassocs) //TODO: groups, modelassocs
+function PANEL:SetList(HTML, startpage, groups, modelassocs) --TODO: groups, modelassocs
 	self.tree:Clear()
 	
     if not HTML or table.Count(HTML) < 1 then
-        self:SetText("Failed to load the ACF Missiles Wiki.  If this continues, please inform us at https://github.com/Bubbus/ACF-Missiles")
+        self:SetText("Failed to load the ACF Missiles Wiki.  If this continues, please inform us at https:--github.com/Bubbus/ACF-Missiles")
         return
     end
     
@@ -97,7 +97,7 @@ function PANEL:PerformLayout()
 	local sidebarWide = 160
 	
 	self.close:SetPos(x - (self.close:GetWide() + 3), 3)
-	//self.close:SetWide(self.html:GetWide())
+	--self.close:SetWide(self.html:GetWide())
 	
 	self.modelview:SetPos(wide, tall)
 	self.modelview:SetWide(sidebarWide)
@@ -106,7 +106,7 @@ function PANEL:PerformLayout()
 	self.tree:SetPos(wide, tall)
 	self.tree:SetSize(sidebarWide, y - (tall + padding))
 	
-	//tall = tall + self.tree:GetTall() + padding
+	--tall = tall + self.tree:GetTall() + padding
 	tall = initTall
 	wide = wide + sidebarWide + padding
 	

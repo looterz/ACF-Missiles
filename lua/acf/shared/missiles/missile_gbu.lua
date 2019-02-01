@@ -20,7 +20,7 @@ ACF_defineGunClass("GBU", {
 
 -- Balance the round in line with the 40mm pod rocket.
 -- 116kg removed for now - looking for candidate to replace
--- good idea before axing a bomb to check its specs! https://www.onwar.com/weapons/rocket/missiles/USA_AGM62.html http://www.designation-systems.net/dusrm/m-62.html
+-- good idea before axing a bomb to check its specs! https:--www.onwar.com/weapons/rocket/missiles/USA_AGM62.html http:--www.designation-systems.net/dusrm/m-62.html
 -- walleye: for fucking missile sites up
 ACF_defineGun("WalleyeGBU", { --id
 	name = "Guided Weapon Mk 1 Walleye",

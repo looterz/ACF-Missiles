@@ -100,7 +100,7 @@ ACF_defineGun("70mmFFAR", { --id
     armdelay    = 0.3     -- minimum fuse arming delay
 } )
 
-/*
+--[[
 ACF_defineGun("40mmFFAR", { --id
 
 	name		= "40mm Pod Rocket",
@@ -188,4 +188,4 @@ ACF_defineGun("70mmFFAR", { --id
     agility     = 1,     -- multiplier for missile turn-rate.
     armdelay    = 0.3     -- minimum fuse arming delay
 } )
-*/
+--]]
