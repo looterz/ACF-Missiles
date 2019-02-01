@@ -46,7 +46,7 @@ ACF_DefineRadar("SmallOMNI-AA", {
 	ent			= "acf_aircraftradar",
 	desc 		= "A lightweight omni-directional radar with a smaller range.",
 	model		= "models/radar/radar_sp_sml.mdl",
-	class 		= "OMNI-AM",
+	class 		= "OMNI-AA",
 	weight 		= 300,
 	range 		= 7874 -- range in inches.
 })
@@ -56,7 +56,7 @@ ACF_DefineRadar("MediumOMNI-AA", {
 	ent			= "acf_aircraftradar",
 	desc 		= "A omni-directional radar with a regular range.",
 	model		= "models/radar/radar_sp_mid.mdl", -- medium one is for now called big one - will be changed
-	class 		= "OMNI-AM",
+	class 		= "OMNI-AA",
 	weight 		= 600,
 	range 		= 15748 -- range in inches.
 })
@@ -66,7 +66,7 @@ ACF_DefineRadar("LargeOMNI-AA", {
 	ent			= "acf_aircraftradar",
 	desc 		= "A heavy omni-directional radar with a large range.",
 	model		= "models/radar/radar_sp_big.mdl",
-	class 		= "OMNI-AM",
+	class 		= "OMNI-AA",
 	weight 		= 1200,
 	range 		= 31496 -- range in inches.
 })
