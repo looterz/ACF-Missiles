@@ -262,12 +262,16 @@ hook.Add("InitPostEntity", "ACFMissiles_AddSoundSupport", function()
 end)
 
 -- Manage the population of the ACF_Aircraft table, done this way to avoid using ents.GetAll to improve performance
-hook.Add("PlayerEnteredVehicle", "ACFMissiles_PlayerEnterVehicle", function(pl, vehicle, role)
-    print("[ACF-Missiles] ".. tostring( pl:Name() ) .." entered ".. tostring(vehicle:GetName()))
-    table.insert(ACF_Aircraft, vehicle)
+hook.Add("PlayerEnteredVehicle", "ACFMissiles_PlayerEnterVehicle", function(pl, veh, role)
+    if (IsValid(veh)) then
+        print("[ACF-Missiles] ".. tostring(pl:Name()) .." entered ".. tostring(veh))
+        table.insert(ACF_ActiveAircraft, veh)
+    end
 end)
 
-hook.Add("PlayerLeaveVehicle", "ACFMissiles_PlayerLeaveVehicle", function(pl, vehicle)
-    print("[ACF-Missiles] ".. tostring( pl:Name() ) .." exited ".. tostring(vehicle:GetName()))
-    table.RemoveByValue(ACF_Aircraft, vehicle)
+hook.Add("PlayerLeaveVehicle", "ACFMissiles_PlayerLeaveVehicle", function(pl, veh)
+    if (IsValid(veh)) then
+        print("[ACF-Missiles] ".. tostring(pl:Name()) .." exited ".. tostring(veh))
+        table.RemoveByValue(ACF_ActiveAircraft, veh)
+    end
 end)
