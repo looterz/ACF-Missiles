@@ -272,6 +272,6 @@ end)
 hook.Add("PlayerLeaveVehicle", "ACFMissiles_PlayerLeaveVehicle", function(pl, veh)
     if (IsValid(veh)) then
         --print("[ACF-Missiles] ".. tostring(pl:Name()) .." exited ".. tostring(veh))
-        --table.RemoveByValue(ACF_ActiveAircraft, veh)
+        table.RemoveByValue(ACF_ActiveAircraft, veh)
     end
 end)
