@@ -139,25 +139,6 @@ function ACFM_GetAircraftInCone(pos, dir, degs)
 	
 end
 
-function ACFM_GetAircraftInSphere(pos, radius)
-
-	local ret = {}
-	local radSqr = radius * radius
-	
-	for _, aircraft in pairs(ACF_ActiveAircraft) do
-		
-		if not IsValid(aircraft) then continue end
-		
-		if pos:DistToSqr(aircraft:GetPos()) <= radSqr then
-			ret[#ret+1] = aircraft
-		end
-		
-	end
-
-	return ret
-	
-end
-
 -- Tests flare distraction effect upon all undistracted missiles, but does not perform the effect itself.  Returns a list of potentially affected missiles.
 -- argument is the bullet in the acf bullet table which represents the flare - not the cm_flare object!
 function ACFM_GetAllMissilesWhichCanSee(pos)

@@ -12,7 +12,7 @@ function ENT:Initialize()
 	self.BaseClass.Initialize(self)
 	
 	self.Inputs = WireLib.CreateInputs( self, { "Active" } )
-	self.Outputs = WireLib.CreateOutputs( self, {"Detected", "ClosestDistance", "Entities [ARRAY]", "Position [ARRAY]", "Velocity [ARRAY]"} )
+	self.Outputs = WireLib.CreateOutputs( self, {"Detected", "ClosestDistance", "Entities [ARRAY]", "Position [ARRAY]", "Velocity [ARRAY]", "LockQuality [ARRAY]"} )
 	
 	self.ThinkDelay = 0.1
 	self.StatusUpdateDelay = 0.5
@@ -22,7 +22,7 @@ function ENT:Initialize()
 	
 	self.Active = false
 	
-	self:CreateRadar((self.ACFName or "Aircraft Radar"), (self.ConeDegs or 0))
+	self:CreateRadar((self.ACFName or "Aircraft Radar"), (self.ConeDegs or 0), (self.MinResolution or 0), (self.MaxResolution or 1), (self.LockTime or 1200))
 	
 	self:EnableClientInfo(true)
 	
@@ -39,6 +39,7 @@ function ENT:ConfigureForClass()
 	if not behaviour then return end
 	
 	self.GetDetectedEnts = behaviour.GetDetectedEnts
+	self.GetDetectedFlares = behaviour.GetDetectedFlares
 
 end
 
@@ -69,7 +70,6 @@ function MakeACF_AircraftRadar(Owner, Pos, Angle, Id)
 	if not Owner:CheckLimit("_acf_aircraftradar") then return false end
 
 	local weapon = ACF.Weapons.Guns[Data1]
-
 	local radar = ACF.Weapons.Radar[Id]
 	
 	if not radar then return false end
@@ -79,13 +79,16 @@ function MakeACF_AircraftRadar(Owner, Pos, Angle, Id)
 	Radar:SetAngles(Angle)
 	Radar:SetPos(Pos)
 	
-	Radar.Model 	= radar.model
-	Radar.Weight 	= radar.weight
-	Radar.ACFName 	= radar.name
-	Radar.ConeDegs 	= radar.viewcone
-	Radar.Range 	= radar.range
-	Radar.Id 		= Id
-	Radar.Class 	= radar.class
+	Radar.Model 	 	= radar.model
+	Radar.Weight 	 	= radar.weight
+	Radar.ACFName 	 	= radar.name
+	Radar.ConeDegs 	 	= radar.viewcone
+	Radar.Range 	 	= radar.range
+	Radar.Id 		 	= Id
+	Radar.Class 	 	= radar.class
+	Radar.MinResolution = radar.minresolution
+	Radar.MaxResolution = radar.maxresolution
+	Radar.LockTime		= radar.locktime
 	
 	Radar:Spawn()
 	Radar:SetPlayer(Owner)
@@ -107,10 +110,13 @@ end
 list.Set( "ACFCvars", "acf_aircraftradar", {"id"} )
 duplicator.RegisterEntityClass("acf_aircraftradar", MakeACF_AircraftRadar, "Pos", "Angle", "Id" )
 
-function ENT:CreateRadar(ACFName, ConeDegs)
+function ENT:CreateRadar(ACFName, ConeDegs, MinRes, MaxRes, LockTime)
 	
-	self.ConeDegs = ConeDegs
 	self.ACFName = ACFName
+	self.ConeDegs = ConeDegs
+	self.MinResolution = MinRes
+	self.MaxResolution = MaxRes
+	self.LockTime = LockTime
 	
 	self:RefreshClientInfo()
 	
@@ -118,6 +124,8 @@ end
 
 function ENT:RefreshClientInfo()
 
+	self:SetNWInt("MinResolution", self.MinResolution)
+	self:SetNWInt("MaxResolution", self.MaxResolution)
 	self:SetNWFloat("ConeDegs", self.ConeDegs)
 	self:SetNWFloat("Range", self.Range)
 	self:SetNWString("Id", self.ACFName)
@@ -227,29 +235,55 @@ function ENT:GetDetectedEnts()
 
 end
 
-function ENT:ScanForAircraft()
+function ENT:GetDetectedFlares()
 
+	print("reached base GetDetectedFlares")
+
+end
+
+-- self.ResArray needs to persist for the duration of any lock-ons
+function ENT:ScanForAircraft()
 	local aircraft = self:GetDetectedEnts() or {}
+	local flares = self:GetDetectedFlares() or {}
 	local entArray = {}
 	local posArray = {}
 	local velArray = {}
+	local qualityArray = {}
 	local i = 0
 	local closest
 	local closestSqr = 999999
 	local thisPos = self:GetPos()
 	
+	if (self.ResArray == nil) then
+		self.ResArray = {}
+	end
+
 	for _, veh in pairs(aircraft) do
 		if (IsValid(veh)) then
 			i = i + 1
-		
+
+			if (self.ResArray[veh] == nil) then
+				self.ResArray[veh] = {
+					FirstSeen = CurTime(),
+					Variance = Vector( math.random( self.MinResolution, self.MaxResolution ), math.random( self.MinResolution, self.MaxResolution ), math.random( self.MinResolution, self.MaxResolution ) )
+				}
+			end
+
+			local distSqr = thisPos:DistToSqr(veh:GetPos())
+			local resMul = math.min(math.TimeFraction(self.ResArray[veh].FirstSeen, self.ResArray[veh].FirstSeen + self.LockTime, CurTime()), 1)
+
+			self.ResArray[veh].Variance = LerpVector(resMul * FrameTime(), self.ResArray[veh].Variance, Vector(0, 0, 0))
+
+			local pos = veh:GetPos() + self.ResArray[veh].Variance
+
 			entArray[i] = veh
-			posArray[i] = veh:GetPos()
+			posArray[i] = pos
 			velArray[i] = veh:GetVelocity()
-			
-			local curSqr = thisPos:DistToSqr(veh:GetPos())
-			if curSqr < closestSqr then
-				closest = veh:GetPos()
-				closestSqr = curSqr
+			qualityArray[i] = (resMul / 1) * 100 -- quality of the lock for this target
+
+			if distSqr < closestSqr then
+				closest = pos
+				closestSqr = distSqr
 			end
 		end
 	end
@@ -261,13 +295,17 @@ function ENT:ScanForAircraft()
 	WireLib.TriggerOutput( self, "Entities", entArray )
 	WireLib.TriggerOutput( self, "Position", posArray )
 	WireLib.TriggerOutput( self, "Velocity", velArray )
+	WireLib.TriggerOutput( self, "LockQuality", qualityArray )
 
 	if i > (self.LastAircraftCount or 0) then
 		self:EmitSound( self.Sound or ACFM.DefaultRadarSound, 500, 100 )
 	end
 	
 	self.LastAircraftCount = i
-	
+
+	if (i == 0) then
+		self.ResArray = nil
+	end
 end
 
 function ENT:ClearOutputs()
@@ -283,6 +321,10 @@ function ENT:ClearOutputs()
 	
 	if #self.Outputs.Velocity.Value > 0 then
 		WireLib.TriggerOutput( self, "Velocity", {} )
+	end
+
+	if #self.Outputs.Velocity.Value > 0 then
+		WireLib.TriggerOutput( self, "LockQuality", {} )
 	end
 
 end
